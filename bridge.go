@@ -47,7 +47,8 @@ func (b *Bridge) URL() string {
 
 // CreateNewUser creates a new user at the bridge.
 // The end-user must press the link button in advance to prove physical access.
-// When the second argument (newUsername) is left emtpy, the bridge will provide a username
+// When the second argument (newUsername) is left emtpy, the bridge will provide a username.
+// CreateNewUser does not update the Bridge instance with the username. This must be done manually.
 func (b *Bridge) CreateNewUser(deviceType string, newUsername string) (string, error) {
 	requestData := map[string]string{"devicetype": deviceType}
 	if len(newUsername) > 0 {

@@ -44,4 +44,6 @@ func main() {
 		return
 	}
 	fmt.Printf("Successfully created new user. Got username: %s\n", newUsername)
+
+	bridge2.Username = newUsername
 }
