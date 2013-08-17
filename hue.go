@@ -1,0 +1,5 @@
+package hue
+
+import (
+	"fmt"
+)
