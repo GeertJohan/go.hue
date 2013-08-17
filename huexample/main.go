@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/GeertJohan/go.hue"
+	"github.com/davecgh/go-spew/spew"
 )
 
 func main() {
@@ -20,10 +21,7 @@ func main() {
 	}
 
 	fmt.Printf("Found %d bridges:\n", len(brokerDetailsSlice))
-
-	for idx, brokerDetails := range brokerDetailsSlice {
-		fmt.Printf("%d: %#v\n", idx, brokerDetails)
-	}
+	spew.Dump(brokerDetailsSlice)
 
 	fmt.Printf("Continueing with first bridge found, id: %s\n", brokerDetailsSlice[0].ID)
 
@@ -38,4 +36,12 @@ func main() {
 
 	// update the Username field on Bridge instance with the user we just created
 	bridge.Username = newUsername
+
+	bridgeConfiguration, err := bridge.FetchConfiguration()
+	if err != nil {
+		fmt.Printf("have error: %s\n", err)
+		return
+	}
+
+	spew.Dump(bridgeConfiguration)
 }
