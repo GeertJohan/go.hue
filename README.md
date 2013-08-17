@@ -5,4 +5,4 @@ go.hue is a Philips Hue package for the Go programming language.
 Download and install this package with `go get github.com/GeertJohan/go.hue`
 
 ### Usage
-An example is located in the huexample folder. For package documentation visit [godoc.org/github.com/GeertJohan/go.hue](godoc.org/github.com/GeertJohan/go.hue)
+An example is located in the huexample folder. For package documentation visit [godoc.org/github.com/GeertJohan/go.hue](http://godoc.org/github.com/GeertJohan/go.hue)
