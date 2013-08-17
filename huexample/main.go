@@ -6,44 +6,36 @@ import (
 )
 
 func main() {
-	fmt.Println("Welcome to huexamlpe")
+	fmt.Println("Welcome to huexample")
 
-	bbds, err := hue.DiscoverBridges()
+	brokerDetailsSlice, err := hue.DiscoverBridges()
 	if err != nil {
 		fmt.Println("Error while discovering bridges:", err)
 		return
 	}
 
-	if len(bbds) == 0 {
+	if len(brokerDetailsSlice) == 0 {
 		fmt.Println("No bridge details found. Stopping.")
 		return
 	}
 
-	fmt.Printf("Found %d bridges:\n", len(bbds))
+	fmt.Printf("Found %d bridges:\n", len(brokerDetailsSlice))
 
-	for idx, bbd := range bbds {
-		fmt.Printf("%d: %#v\n", idx, bbd)
+	for idx, brokerDetails := range brokerDetailsSlice {
+		fmt.Printf("%d: %#v\n", idx, brokerDetails)
 	}
 
-	fmt.Printf("Continueing with first bridge found, id: %s\n", bbds[0].ID)
+	fmt.Printf("Continueing with first bridge found, id: %s\n", brokerDetailsSlice[0].ID)
 
-	fmt.Println("Going to create user 'newdeveloper':")
-	bridge1 := hue.NewBridge(bbds[0].InternalIPAddress)
-	newUsername, err := bridge1.CreateNewUser("huexample", "newdeveloper")
+	fmt.Println("Going to create user with empty username, bridge will generate a username.")
+	bridge := hue.NewBridge(brokerDetailsSlice[0].InternalIPAddress)
+	newUsername, err := bridge.CreateNewUser("huexample", "")
 	if err != nil {
 		fmt.Printf("have error: %s\n", err)
 		return
 	}
 	fmt.Printf("Successfully created new user. Got username: %s\n", newUsername)
 
-	fmt.Println("Going to create user with empty username:")
-	bridge2 := hue.NewBridge(bbds[0].InternalIPAddress)
-	newUsername, err = bridge2.CreateNewUser("huexample", "")
-	if err != nil {
-		fmt.Printf("have error: %s\n", err)
-		return
-	}
-	fmt.Printf("Successfully created new user. Got username: %s\n", newUsername)
-
-	bridge2.Username = newUsername
+	// update the Username field on Bridge instance with the user we just created
+	bridge.Username = newUsername
 }
