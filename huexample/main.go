@@ -43,5 +43,21 @@ func main() {
 		return
 	}
 
-	spew.Dump(bridgeConfiguration)
+	fmt.Printf("Bridge name is '%s'.\n", bridgeConfiguration.Name)
+	fmt.Printf("Bridge has %d users.\n", len(bridgeConfiguration.Whitelist))
+
+	lights, err := bridge.Lights()
+	if err != nil {
+		fmt.Printf("have error: %s\n", err)
+		return
+	}
+	fmt.Printf("Have %d lights.\n", len(lights))
+
+	spew.Dump(lights[0].Attributes())
+
+	// err = lights[0].SetName("Lange lamp")
+	// if err != nil {
+	// 	fmt.Printf("Have error: %s\n", err)
+	// }
+
 }

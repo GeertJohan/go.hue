@@ -21,7 +21,6 @@ type apiResponseError struct {
 
 // Bridge represents a Hue Bridge
 type Bridge struct {
-	id       string
 	IP       string
 	Username string
 }
@@ -49,7 +48,7 @@ func (t *Time) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-// TODO: use time.Time for Utc and Whitelist.LastUseDate, Whitelist.CreateDate
+// BridgeConfiguration holds the global configuration values for a bridge.
 type BridgeConfiguration struct {
 	Proxyport uint16 `json:"proxyport"` // Port of the proxy being used by the bridge. If set to 0 then a proxy is not being used.
 	Utc       *Time  `json:"utc"`       // Current time stored on the bridge.
@@ -84,14 +83,16 @@ func NewBridge(IP string) *Bridge {
 	return b
 }
 
-// ID returns the ID of the Bridge as string
-func (b *Bridge) ID() string {
-	if len(b.id) == 0 {
-		//++ retrieve ID
+// Name returns the Name of the Bridge as string
+func (b *Bridge) Name() (string, error) {
+	c, err := b.FetchConfiguration()
+	if err != nil {
+		return "", err
 	}
-	return b.id
+	return c.Name, nil
 }
 
+// URL returns the basic url for api requests. It includes the bridge IP and Username
 func (b *Bridge) URL() string {
 	return "http://" + b.IP + "/api/" + b.Username
 }
