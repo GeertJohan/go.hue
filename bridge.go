@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"time"
 )
 
 type apiResponse struct {
@@ -25,10 +26,33 @@ type Bridge struct {
 	Username string
 }
 
+// Time performs proper json unarmshalling with time.Parse(..)
+type Time time.Time
+
+func (t *Time) UnmarshalJSON(b []byte) error {
+	// check if the given []byte looks like a json string
+	if len(b) < 2 || b[0] != '"' || b[len(b)-1] != '"' {
+		return errors.New("invalid json string")
+	}
+
+	// empty json string, quick return
+	if len(b) == 2 {
+		return nil
+	}
+
+	// parse the time
+	stdTime, err := time.Parse("2006-01-02T15:04:05", string(b[1:len(b)-1]))
+	if err != nil {
+		return err
+	}
+	*t = Time(stdTime)
+	return nil
+}
+
 // TODO: use time.Time for Utc and Whitelist.LastUseDate, Whitelist.CreateDate
 type BridgeConfiguration struct {
 	Proxyport uint16 `json:"proxyport"` // Port of the proxy being used by the bridge. If set to 0 then a proxy is not being used.
-	Utc       string `json:"utc"`       // Current time stored on the bridge.
+	Utc       *Time  `json:"utc"`       // Current time stored on the bridge.
 	Name      string `json:"name"`      // length 4..16. Name of the bridge. This is also its uPnP name, so will reflect the actual uPnP name after any conflicts have been resolved.
 	SwUpdate  struct {
 		UpdateState int    `json:"updatestate"`
@@ -37,10 +61,10 @@ type BridgeConfiguration struct {
 		Notify      bool   `json:"notify"`
 	} `json:"swupdate"` // Contains information related to software updates.
 	Whitelist map[string]struct {
-		LastUseDate string `json:"last use date"`
-		CreateDate  string `json:"create date"`
-		Name        string `json:"name"`
-	} `json:"whitelist"` // An array of whitelisted user IDs.
+		LastUseDate *Time  `json:"last use date"`
+		CreateDate  *Time  `json:"create date"`
+		Name        string `json:"name"` // DeviceType (library or executable name)
+	} `json:"whitelist"` // A map of whitelisted usernames with their details as mapped value (struct).
 	Swversion      string `json:"swversion"`      // Software version of the bridge.
 	ProxyAddress   string `json:"proxyaddress"`   // length 0..40. IP Address of the proxy server being used. A value of “none” indicates no proxy.
 	Mac            string `json:"mac"`            // MAC address of the bridge.
